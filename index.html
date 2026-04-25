@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedVerify — Medical Claim Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #f8f9fb;
+      --bg2:       #ffffff;
+      --bg3:       #f1f4f8;
+      --border:    #e2e7ed;
+      --border2:   #cdd5de;
+      --text:      #111827;
+      --text2:     #4b5563;
+      --text3:     #9ca3af;
+      --accent:    #1d4ed8;
+      --accent-lt: #eff4ff;
+      --accent-mid:#3b6ef5;
+      --pro:       #16a34a;
+      --pro-lt:    #f0fdf4;
+      --pro-border:#bbf7d0;
+      --con:       #dc2626;
+      --con-lt:    #fff5f5;
+      --con-border:#fecaca;
+      --warn:      #d97706;
+      --warn-lt:   #fffbeb;
+      --warn-border:#fde68a;
+      --sans:      "Inter", system-ui, sans-serif;
+      --display:   "Playfair Display", Georgia, serif;
+      --mono:      "IBM Plex Mono", monospace;
+      --radius:    10px;
+      --radius-lg: 16px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      --t:         0.18s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-y: scroll; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      padding: 0 2.5rem;
+      justify-content: space-between;
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+
+    .nav-mark {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .nav-mark svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; }
+
+    .nav-name { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
+
+    .nav-links { display: flex; gap: 4px; }
+
+    .nav-link {
+      background: none;
+      border: none;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text2);
+      padding: 0.4rem 0.9rem;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: var(--t);
+    }
+
+    .nav-link:hover  { color: var(--text); background: var(--bg3); }
+    .nav-link.active { color: var(--accent); background: var(--accent-lt); }
+
+    /* PAGES */
+    .page { display: none; animation: fadeUp 0.28s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .container { max-width: 920px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* ABOUT HERO */
+    .about-hero {
+      text-align: center;
+      padding: 4rem 1rem 3.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+
+    .about-eyebrow {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-lt);
+      border: 1px solid rgba(29,78,216,0.18);
+      padding: 0.28rem 0.85rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-title {
+      font-family: var(--display);
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .about-lead {
+      font-size: 1.02rem;
+      color: var(--text2);
+      line-height: 1.8;
+      max-width: 620px;
+      margin: 0 auto 2.25rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.72rem 1.65rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--t);
+      box-shadow: 0 2px 8px rgba(29,78,216,0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-mid);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(29,78,216,0.3);
+    }
+
+    /* Section */
+    .about-section { margin-bottom: 3.5rem; }
+
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .feat { background: var(--bg2); padding: 1.5rem; transition: background var(--t); }
+    .feat:hover { background: var(--bg3); }
+
+    .feat-num {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.6rem;
+    }
+
+    .feat-title { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+    .feat-desc  { font-size: 0.78rem; color: var(--text2); line-height: 1.65; }
+
+    /* Timeline */
+    .timeline { padding-left: 1.25rem; border-left: 2px solid var(--border); }
+
+    .tl-item { position: relative; padding: 0 0 1.75rem 1.75rem; }
+    .tl-item:last-child { padding-bottom: 0; }
+
+    .tl-dot {
+      position: absolute;
+      left: -6px; top: 5px;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      border: 2px solid var(--bg2);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .tl-step {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.2rem;
+    }
+
+    .tl-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .tl-desc  { font-size: 0.8rem; color: var(--text2); line-height: 1.65; }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .contact-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.4rem;
+      transition: var(--t);
+    }
+
+    .contact-card:hover { border-color: rgba(29,78,216,0.3); box-shadow: var(--shadow-md); }
+
+    .contact-role {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-name   { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+    .contact-detail { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); }
+    .contact-note   { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; line-height: 1.5; }
+
+    /* VERIFY PAGE */
+    .verify-header {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .verify-title {
+      font-family: var(--display);
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .verify-sub { font-size: 0.85rem; color: var(--text2); }
+
+    /* Claim input */
+    .claim-box {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+
+    .claim-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(29,78,216,0.1);
+    }
+
+    .claim-label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 0.65rem;
+    }
+
+    .claim-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--sans);
+      font-size: 0.97rem;
+      color: var(--text);
+      resize: none;
+      min-height: 72px;
+      line-height: 1.7;
+    }
+
+    .claim-input::placeholder { color: var(--text3); }
+
+    .claim-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .examples-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 0.45rem;
+    }
+
+    .examples-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+    .pill {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.28rem 0.72rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: var(--t);
+    }
+
+    .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+    .btn-verify {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.65rem 1.4rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--t);
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(29,78,216,0.2);
+    }
+
+    .btn-verify:hover:not(:disabled) { background: var(--accent-mid); transform: translateY(-1px); }
+    .btn-verify:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Error */
+    .error-box {
+      display: none;
+      background: var(--con-lt);
+      border: 1px solid var(--con-border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1.1rem;
+      font-size: 0.82rem;
+      color: var(--con);
+      margin-bottom: 1.25rem;
+      font-family: var(--mono);
+    }
+    .error-box.show { display: block; }
+
+    /* THINKING PANEL */
+    #thinkingPanel {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .thinking-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+
+    .thinking-left { display: flex; align-items: center; gap: 0.65rem; }
+
+    .t-spinner {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .thinking-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .thinking-timer { font-family: var(--mono); font-size: 0.72rem; color: var(--text3); }
+
+    .steps-track { padding: 0.75rem 1.5rem; display: flex; flex-direction: column; }
+
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.5rem 0;
+      position: relative;
+    }
+
+    .step-row:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 10px; top: 31px;
+      width: 1px; height: calc(100% - 6px);
+      background: var(--border);
+    }
+
+    .step-dot {
+      width: 21px; height: 21px;
+      min-width: 21px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border2);
+      background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+      transition: all 0.25s ease;
+    }
+
+    .step-row.s-active .step-dot {
+      border-color: var(--accent);
+      background: var(--accent-lt);
+    }
+
+    .step-row.s-active .step-dot::after {
+      content: "";
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 1px solid rgba(29,78,216,0.2);
+      animation: ripple 1.4s ease infinite;
+    }
+
+    @keyframes ripple {
+      0%   { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    .step-row.s-done .step-dot { border-color: var(--pro); background: var(--pro-lt); }
+
+    .step-check { width: 9px; height: 9px; }
+
+    .step-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text3);
+      transition: color var(--t);
+    }
+
+    .step-row.s-active .step-name { color: var(--accent); font-weight: 600; }
+    .step-row.s-done  .step-name  { color: var(--pro); }
+
+    /* RESULTS */
+    #resultsPanel { display: none; }
+
+    .verdict-banner {
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      border: 1px solid;
+    }
+
+    .verdict-banner.v-true     { background: var(--pro-lt);  border-color: var(--pro-border); }
+    .verdict-banner.v-false    { background: var(--con-lt);  border-color: var(--con-border); }
+    .verdict-banner.v-uncertain{ background: var(--warn-lt); border-color: var(--warn-border); }
+
+    .verdict-mark {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      animation: bounceIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .v-true  .verdict-mark { background: var(--pro);  color: #fff; }
+    .v-false .verdict-mark { background: var(--con);  color: #fff; }
+    .v-uncertain .verdict-mark { background: var(--warn); color: #fff; }
+
+    .verdict-info { flex: 1; }
+
+    .verdict-word {
+      font-family: var(--display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .v-true  .verdict-word { color: var(--pro); }
+    .v-false .verdict-word { color: var(--con); }
+    .v-uncertain .verdict-word { color: var(--warn); }
+
+    .verdict-sub { font-size: 0.83rem; color: var(--text2); margin-top: 0.15rem; }
+    .verdict-claim-echo { font-size: 0.78rem; color: var(--text3); margin-top: 0.3rem; font-style: italic; }
+
+    /* Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .metric { background: var(--bg2); padding: 1.1rem 1.25rem; transition: background var(--t); }
+    .metric:hover { background: var(--bg3); }
+
+    .metric-key {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 0.35rem;
+    }
+
+    .metric-val { font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .metric-desc { font-size: 0.65rem; color: var(--text3); margin-top: 0.15rem; }
+
+    /* Debate */
+    .debate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .debate-card { border-radius: var(--radius); border: 1px solid; overflow: hidden; box-shadow: var(--shadow); }
+    .debate-card.pro { border-color: var(--pro-border); }
+    .debate-card.con { border-color: var(--con-border); }
+
+    .debate-head {
+      padding: 0.65rem 1.1rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .debate-card.pro .debate-head { background: var(--pro-lt); color: var(--pro); }
+    .debate-card.con .debate-head { background: var(--con-lt); color: var(--con); }
+
+    .debate-head-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .pro .debate-head-dot { background: var(--pro); }
+    .con .debate-head-dot { background: var(--con); }
+
+    .debate-body { background: var(--bg2); padding: 1.1rem 1.25rem; font-size: 0.85rem; color: var(--text2); line-height: 1.75; min-height: 100px; }
+
+    /* Section cards */
+    .section-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-card-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text2);
+    }
+
+    .sc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    .section-card-body { padding: 1.25rem; font-size: 0.86rem; color: var(--text2); line-height: 1.8; }
+
+    /* Sources */
+    .sources-list { display: flex; flex-direction: column; }
+
+    .source-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text2);
+      padding: 0.6rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .source-row:last-child { border-bottom: none; }
+
+    .source-num { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); min-width: 22px; padding-top: 1px; }
+
+    /* COMBINED REPORT */
+    .report-divider {
+      border: none;
+      border-top: 1px solid var(--border2);
+      margin: 2.5rem 0 2rem;
+      position: relative;
+    }
+
+    .report-divider-label {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg);
+      padding: 0 0.75rem;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+
+    .report-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .report-topbar {
+      background: var(--text);
+      color: #fff;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .report-doc-title { font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .report-doc-meta  { font-family: var(--mono); font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-top: 0.2rem; }
+
+    .report-verdict-badge {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.32rem 0.8rem;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .report-body { padding: 2rem; }
+
+    .report-section { margin-bottom: 2rem; }
+    .report-section:last-child { margin-bottom: 0; }
+
+    .report-section-title {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .report-text { font-size: 0.86rem; color: var(--text2); line-height: 1.8; }
+
+    .report-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    .rm {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .rm-key { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.3rem; }
+    .rm-val { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+
+    .balance-bar-wrap {
+      height: 5px;
+      background: var(--bg3);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 0.65rem;
+      border: 1px solid var(--border);
+    }
+
+    .balance-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--pro) 0%, var(--con) 100%);
+      border-radius: 100px;
+      transition: width 0.9s cubic-bezier(0.4,0,0.2,1) 0.2s;
+    }
+
+    .balance-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      color: var(--text3);
+      margin-top: 0.35rem;
+      font-family: var(--mono);
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      nav { padding: 0 1.25rem; }
+      .container { padding: 2rem 1.25rem 4rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .contact-grid  { grid-template-columns: 1fr; }
+      .debate-row    { grid-template-columns: 1fr; }
+      .metrics-grid  { grid-template-columns: repeat(2, 1fr); }
+      .report-metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .claim-footer  { flex-direction: column; align-items: flex-start; gap: 0.85rem; }
+      .report-topbar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-mark">
+      <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/><circle cx="8" cy="8" r="3" stroke="#fff" fill="none" stroke-width="1.5"/></svg>
+    </div>
+    <span class="nav-name">MedVerify</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('about')">About</button>
+    <button class="nav-link" onclick="showPage('verify')">Verify Claim</button>
+  </div>
+</nav>
+
+<!-- ABOUT PAGE -->
+<div class="page active" id="page-about">
+  <div class="container">
+
+    <div class="about-hero">
+      <div class="about-eyebrow">Medical Intelligence System</div>
+      <h1 class="about-title">Adversarial AI for<br/>Medical Fact-Checking</h1>
+      <p class="about-lead">
+        MedVerify evaluates health and medical claims against peer-reviewed scientific literature using a multi-agent debate pipeline, hybrid retrieval, and probabilistic uncertainty analysis.
+      </p>
+      <button class="btn-primary" onclick="showPage('verify')">Start Verifying Claims</button>
+    </div>
+
+    <div class="about-section">
+      <div class="section-heading">What the Project Does</div>
+      <div class="features-grid">
+        <div class="feat">
+          <div class="feat-num">01</div>
+          <div class="feat-title">Hybrid RAG Pipeline</div>
+          <div class="feat-desc">Combines a local FAISS vector index with live PubMed NCBI search, pulling the most relevant peer-reviewed evidence for any claim.</div>
+        </div>
+        <div class="feat">
+          <div class="feat-num">02</div>
+          <div class="feat-title">Multi-Agent Debate</div>
+          <div class="feat-desc">A PRO agent and a CON agent independently argue each side using evidence-backed reasoning, followed by structured rebuttals.</div>
+        </div>
+        <div class="feat">
+          <div class="feat-num">03</div>
+          <div class="feat-title">Judicial Verdict</div>
+          <div class="feat-desc">An independent judge agent weighs both arguments to produce a final True / False / Uncertain verdict with full reasoning.</div>
+        </div>
+        <div class="feat">
+          <div class="feat-num">04</div>
+          <div class="feat-title">5-Factor Uncertainty</div>
+          <div class="feat-desc">Confidence is decomposed across five axes — evidence quality, retrieval score, argument balance, model certainty, and conflict level.</div>
+        </div>
+        <div class="feat">
+          <div class="feat-num">05</div>
+          <div class="feat-title">Source Transparency</div>
+          <div class="feat-desc">Every verdict is backed by retrievable sources. Uncertainty factors are named and explained, not hidden in a black box.</div>
+        </div>
+        <div class="feat">
+          <div class="feat-num">06</div>
+          <div class="feat-title">Combined Report</div>
+          <div class="feat-desc">A structured report consolidates the verdict, debate arguments, rebuttals, sources, and every metric in one document.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="section-heading">How It Works</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 01</div>
+          <div class="tl-title">Evidence Retrieval</div>
+          <div class="tl-desc">The claim is embedded and used to query a local FAISS index (5 chunks) and the PubMed API (3 articles), returning a unified evidence pool.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 02</div>
+          <div class="tl-title">Claim Classification</div>
+          <div class="tl-desc">The claim is tagged by domain (nutrition, pharmacology, oncology…) and complexity to route it to the correct reasoning chain.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 03</div>
+          <div class="tl-title">Adversarial Argument Generation</div>
+          <div class="tl-desc">Two independent agents simultaneously build the strongest possible case for and against the claim using retrieved evidence.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 04</div>
+          <div class="tl-title">Cross-Examination and Rebuttals</div>
+          <div class="tl-desc">Each agent challenges the other's argument, exposing logical gaps, citation weaknesses, and counter-evidence.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 05</div>
+          <div class="tl-title">Judicial Verdict</div>
+          <div class="tl-desc">A neutral judge agent weighs the full debate transcript and issues a final verdict with detailed reasoning.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">STEP 06</div>
+          <div class="tl-title">5-Factor Uncertainty Analysis</div>
+          <div class="tl-desc">Confidence, uncertainty, retrieval quality, evidence conflict, and model certainty are computed and returned alongside the verdict.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="section-heading">Project Team</div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          
+          <div class="contact-name">Gaali Sai Praharshita</div>
+          <div class="contact-detail">praha1275@gmail.com</div>
+          <div class="contact-note">Pipeline architecture · Multi-agent debate</div>
+        </div>
+        <div class="contact-card">
+          
+          <div class="contact-name">Akshatha Gadasandula</div>
+          <div class="contact-detail">akshathagadasandula@gmail.com</div>
+          <div class="contact-note">FAISS RAG pipeline · Uncertainty modelling</div>
+        </div>
+        <div class="contact-card">
+          
+          <div class="contact-name">Srichandana Velagapudi</div>
+          <div class="contact-detail">srichandanav12@gmail.com</div>
+          <div class="contact-note">PubMed integration · Evidence quality scoring</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VERIFY PAGE -->
+<div class="page" id="page-verify">
+  <div class="container">
+
+    <div class="verify-header">
+      <h2 class="verify-title">Verify a Medical Claim</h2>
+      <p class="verify-sub">Enter any health or medical claim. The system evaluates it against peer-reviewed scientific literature.</p>
+    </div>
+
+    <div class="claim-box">
+      <span class="claim-label">Claim</span>
+      <textarea class="claim-input" id="claimInput" rows="3"
+        placeholder="e.g. Drinking coffee reduces the risk of Parkinson's disease…"></textarea>
+      <div class="claim-footer">
+        <div>
+          <div class="examples-label">Quick Examples</div>
+          <div class="examples-row">
+            <span class="pill" onclick="setClaim('Vaccines cause autism.')">Vaccines cause autism</span>
+            <span class="pill" onclick="setClaim('Exercise reduces heart disease risk.')">Exercise reduces heart disease</span>
+            <span class="pill" onclick="setClaim('Vitamin C cures the common cold.')">Vitamin C cures cold</span>
+            <span class="pill" onclick="setClaim('Drinking 8 glasses of water daily is essential.')">8 glasses of water daily</span>
+          </div>
+        </div>
+        <button class="btn-verify" id="verifyBtn" onclick="verifyClaim()">
+          <span id="verifyBtnText">Verify Claim</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- Thinking -->
+    <div id="thinkingPanel">
+      <div class="thinking-head">
+        <div class="thinking-left">
+          <div class="t-spinner"></div>
+          <span class="thinking-label">Analysing Claim</span>
+        </div>
+        <span class="thinking-timer" id="timerDisplay">0.0s</span>
+      </div>
+      <div class="steps-track">
+        <div class="step-row" id="sr0">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="4" cy="4" r="2.5"/><line x1="6" y1="6" x2="9" y2="9"/></svg></div>
+          <div class="step-name">Evidence Retrieval — FAISS + PubMed</div>
+        </div>
+        <div class="step-row" id="sr1">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1.5" y="2" width="7" height="6" rx="1"/><line x1="3" y1="4.5" x2="7" y2="4.5"/></svg></div>
+          <div class="step-name">Claim Classification</div>
+        </div>
+        <div class="step-row" id="sr2">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1,8 5,2 9,8"/></svg></div>
+          <div class="step-name">PRO Agent — Building Arguments</div>
+        </div>
+        <div class="step-row" id="sr3">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1,2 5,8 9,2"/></svg></div>
+          <div class="step-name">CON Agent — Counter-Arguments</div>
+        </div>
+        <div class="step-row" id="sr4">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3C8 7 2 7 2 5"/><polyline points="2,3 2,5 4,5"/></svg></div>
+          <div class="step-name">Cross-Examination and Rebuttals</div>
+        </div>
+        <div class="step-row" id="sr5">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="1,5 4,8 9,2"/></svg></div>
+          <div class="step-name">Judicial Verdict</div>
+        </div>
+        <div class="step-row" id="sr6">
+          <div class="step-dot"><svg class="step-check" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1.5" y="5" width="2" height="3.5" rx="0.3"/><rect x="4" y="3" width="2" height="5.5" rx="0.3"/><rect x="6.5" y="1.5" width="2" height="7" rx="0.3"/></svg></div>
+          <div class="step-name">5-Factor Uncertainty Analysis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsPanel">
+
+      <div class="verdict-banner" id="verdictBanner">
+        <div class="verdict-mark" id="verdictMark"></div>
+        <div class="verdict-info">
+          <div class="verdict-word" id="verdictWord"></div>
+          <div class="verdict-sub" id="verdictSub"></div>
+          <div class="verdict-claim-echo" id="verdictClaimEcho"></div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-key">Confidence</div>
+          <div class="metric-val" id="mConfidence">–</div>
+          <div class="metric-desc">Overall certainty</div>
+        </div>
+        <div class="metric">
+          <div class="metric-key">Uncertainty</div>
+          <div class="metric-val" id="mUncertainty">–</div>
+          <div class="metric-desc">Evidence ambiguity</div>
+        </div>
+        <div class="metric">
+          <div class="metric-key">Evidence Found</div>
+          <div class="metric-val" id="mEvidence">–</div>
+          <div class="metric-desc">Sources retrieved</div>
+        </div>
+        <div class="metric">
+          <div class="metric-key">Evidence Quality</div>
+          <div class="metric-val" id="mQuality">–</div>
+          <div class="metric-desc">Peer-review rating</div>
+        </div>
+        <div class="metric">
+          <div class="metric-key">Retrieval Score</div>
+          <div class="metric-val" id="mRetrieval">–</div>
+          <div class="metric-desc">Relevance to claim</div>
+        </div>
+        <div class="metric">
+          <div class="metric-key">Model Certainty</div>
+          <div class="metric-val" id="mCertainty">–</div>
+          <div class="metric-desc">Adjusted confidence</div>
+        </div>
+      </div>
+
+      <div class="section-heading" style="margin-bottom: 0.75rem;">Adversarial Debate</div>
+      <div class="debate-row">
+        <div class="debate-card pro">
+          <div class="debate-head"><span class="debate-head-dot"></span> PRO Arguments</div>
+          <div class="debate-body" id="proBody">–</div>
+        </div>
+        <div class="debate-card con">
+          <div class="debate-head"><span class="debate-head-dot"></span> CON Arguments</div>
+          <div class="debate-body" id="conBody">–</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-head"><span class="sc-dot"></span> Rebuttals and Cross-Examination</div>
+        <div class="section-card-body" id="rebuttalBody">–</div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-head"><span class="sc-dot"></span> Judge's Reasoning</div>
+        <div class="section-card-body" id="reasoningBody">–</div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-head"><span class="sc-dot"></span> Retrieved Evidence Sources</div>
+        <div class="sources-list" id="sourcesList"></div>
+      </div>
+
+      <!-- Combined Report -->
+      <div class="report-divider">
+        <span class="report-divider-label">Combined Report</span>
+      </div>
+
+      <div class="report-card">
+        <div class="report-topbar">
+          <div>
+            <div class="report-doc-title">MedVerify Analysis Report</div>
+            <div class="report-doc-meta" id="reportMeta"></div>
+          </div>
+          <div class="report-verdict-badge" id="reportBadge"></div>
+        </div>
+        <div class="report-body">
+
+          <div class="report-section">
+            <div class="report-section-title">01 — Claim Under Analysis</div>
+            <div class="report-text" id="rClaim"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">02 — Verdict Summary</div>
+            <div class="report-text" id="rVerdict"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">03 — Key Metrics</div>
+            <div class="report-metrics-row">
+              <div class="rm"><div class="rm-key">Confidence</div><div class="rm-val" id="rConf">–</div></div>
+              <div class="rm"><div class="rm-key">Uncertainty</div><div class="rm-val" id="rUnc">–</div></div>
+              <div class="rm"><div class="rm-key">Evidence</div><div class="rm-val" id="rEv">–</div></div>
+              <div class="rm"><div class="rm-key">Quality</div><div class="rm-val" id="rQual">–</div></div>
+              <div class="rm"><div class="rm-key">Retrieval</div><div class="rm-val" id="rRet">–</div></div>
+              <div class="rm"><div class="rm-key">Certainty</div><div class="rm-val" id="rCert">–</div></div>
+            </div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">04 — PRO vs CON Balance</div>
+            <div class="balance-bar-wrap">
+              <div class="balance-bar" id="rBalance" style="width:50%"></div>
+            </div>
+            <div class="balance-labels"><span>PRO</span><span>CON</span></div>
+            <div class="report-text" style="margin-top:0.75rem" id="rProText"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">05 — CON Arguments</div>
+            <div class="report-text" id="rConText"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">06 — Rebuttals</div>
+            <div class="report-text" id="rRebuttal"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">07 — Judge's Full Reasoning</div>
+            <div class="report-text" id="rReasoning"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-title">08 — Evidence Sources</div>
+            <div class="report-text" id="rSources"></div>
+          </div>
+
+          <div class="report-section" style="margin-bottom:0">
+            <div class="report-section-title">09 — Conclusion</div>
+            <div class="report-text" id="rConclusion"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(n => {
+      if ((id === 'about'  && n.textContent.includes('About'))  ||
+          (id === 'verify' && n.textContent.includes('Verify'))) n.classList.add('active');
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function setClaim(t) { document.getElementById('claimInput').value = t; }
+
+  let timerInterval;
+  function startTimer() {
+    const s = Date.now();
+    document.getElementById('timerDisplay').textContent = '0.0s';
+    timerInterval = setInterval(() => {
+      document.getElementById('timerDisplay').textContent = ((Date.now() - s) / 1000).toFixed(1) + 's';
+    }, 100);
+  }
+  function stopTimer() { clearInterval(timerInterval); }
+
+  function setStep(i, state) {
+    document.getElementById('sr' + i).className =
+      'step-row' + (state === 'active' ? ' s-active' : state === 'done' ? ' s-done' : '');
+  }
+  function activateStep(i) {
+    for (let j = 0; j < 7; j++) setStep(j, j < i ? 'done' : j === i ? 'active' : '');
+  }
+  function allDone() { for (let j = 0; j < 7; j++) setStep(j, 'done'); }
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function showError(msg) {
+    const b = document.getElementById('errorBox');
+    b.textContent = msg; b.classList.add('show');
+  }
+  function hideError() { document.getElementById('errorBox').classList.remove('show'); }
+
+  async function verifyClaim() {
+    const claim = document.getElementById('claimInput').value.trim();
+    if (!claim) { showError('Please enter a medical claim to verify.'); return; }
+
+    hideError();
+    document.getElementById('resultsPanel').style.display = 'none';
+    document.getElementById('thinkingPanel').style.display = 'block';
+
+    const btn = document.getElementById('verifyBtn');
+    btn.disabled = true;
+    document.getElementById('verifyBtnText').textContent = 'Verifying…';
+    for (let i = 0; i < 7; i++) setStep(i, '');
+    startTimer();
+
+    const delays = [500, 600, 1100, 1100, 900, 700, 500];
+    const uiSteps = async () => {
+      for (let i = 0; i < 7; i++) { activateStep(i); await sleep(delays[i]); }
+    };
+    const apiCall = async () => {
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claim, faiss_k: 5, pubmed_k: 3 })
+      });
+      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Verification failed'); }
+      return res.json();
+    };
+
+    try {
+      const [_, result] = await Promise.all([uiSteps(), apiCall()]);
+      stopTimer(); allDone(); await sleep(350);
+      document.getElementById('thinkingPanel').style.display = 'none';
+      btn.disabled = false;
+      document.getElementById('verifyBtnText').textContent = 'Verify Claim';
+      renderResult(result, claim);
+    } catch (err) {
+      stopTimer();
+      for (let i = 0; i < 7; i++) setStep(i, '');
+      document.getElementById('thinkingPanel').style.display = 'none';
+      btn.disabled = false;
+      document.getElementById('verifyBtnText').textContent = 'Verify Claim';
+      showError('Verification failed: ' + err.message);
+    }
+  }
+
+  function setText(id, val) { document.getElementById(id).textContent = val; }
+
+  function renderResult(r, claim) {
+    const verdictMap = { True: 'TRUE', False: 'FALSE', Uncertain: 'UNCERTAIN' };
+    const verdict = verdictMap[r.verdict] || 'UNCERTAIN';
+    const marks = { TRUE: '✓', FALSE: '✗', UNCERTAIN: '?' };
+    const subs  = {
+      TRUE:      'Supported by peer-reviewed scientific evidence.',
+      FALSE:     'Not supported by current scientific evidence.',
+      UNCERTAIN: 'Insufficient evidence to draw a conclusion.'
+    };
+    const vClass = { TRUE: 'v-true', FALSE: 'v-false', UNCERTAIN: 'v-uncertain' };
+
+    document.getElementById('verdictBanner').className = 'verdict-banner ' + vClass[verdict];
+    document.getElementById('verdictMark').textContent = marks[verdict];
+    document.getElementById('verdictWord').textContent = r.verdict || 'Unknown';
+    document.getElementById('verdictSub').textContent  = subs[verdict];
+    document.getElementById('verdictClaimEcho').textContent = '"' + claim + '"';
+
+    const conf = r.confidence !== undefined ? Math.round(r.confidence) : null;
+    const unc  = (r.uncertainty_score ?? r.uncertainty) !== undefined ? Math.round(r.uncertainty_score ?? r.uncertainty) : null;
+    const ev   = r.retrieved_count ?? r.evidence ?? null;
+    const qual = r.quality ?? (r.pro_score !== undefined && r.con_score !== undefined ? ((r.pro_score + r.con_score)/2).toFixed(2) : null);
+    const ret  = r.retrieval ?? r.evidence_conflict?.score ?? null;
+    const cert = r.certainty ?? (conf !== null ? Math.round(conf * (1 - (unc ?? 0)/100)) : null);
+
+    setText('mConfidence', conf !== null ? conf + '%' : '–');
+    setText('mUncertainty', unc !== null ? unc + '%' : '–');
+    setText('mEvidence', ev !== null ? ev : '–');
+    setText('mQuality', qual !== null ? qual + ' ★' : '–');
+    setText('mRetrieval', ret !== null ? ret : '–');
+    setText('mCertainty', cert !== null ? cert + '%' : '–');
+
+    document.getElementById('proBody').innerHTML       = '<p>' + (r.pro_r1 || r.pro || 'No PRO arguments returned.') + '</p>';
+    document.getElementById('conBody').innerHTML       = '<p>' + (r.con_r1 || r.con || 'No CON arguments returned.') + '</p>';
+    const rebText = [r.pro_rebuttal || '', r.con_rebuttal || ''].filter(Boolean).join('<br/><br/>') || 'No rebuttals returned.';
+    document.getElementById('rebuttalBody').innerHTML  = '<p>' + rebText + '</p>';
+    document.getElementById('reasoningBody').innerHTML = '<p>' + (r.reason || r.interpretation || 'No reasoning returned.') + '</p>';
+
+    let sourcesHtml = '', sourcesText = '';
+    if (r.uncertainty_sources && Object.keys(r.uncertainty_sources).length > 0) {
+      Object.entries(r.uncertainty_sources).forEach(([k, v], i) => {
+        const txt = v.detail || v;
+        sourcesHtml += `<div class="source-row"><span class="source-num">[${i+1}]</span><span>${txt}</span></div>`;
+        sourcesText += `[${i+1}] ${txt}\n`;
+      });
+    } else if (r.sources && r.sources.length > 0) {
+      r.sources.forEach((s, i) => {
+        sourcesHtml += `<div class="source-row"><span class="source-num">[${i+1}]</span><span>${s}</span></div>`;
+        sourcesText += `[${i+1}] ${s}\n`;
+      });
+    } else {
+      sourcesHtml = '<div class="source-row">No specific sources retrieved.</div>';
+      sourcesText = 'No specific sources retrieved.';
+    }
+    document.getElementById('sourcesList').innerHTML = sourcesHtml;
+
+    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    document.getElementById('reportMeta').textContent   = 'Generated ' + now + '  ·  MedVerify v1.0';
+    document.getElementById('reportBadge').textContent  = 'Verdict: ' + (r.verdict || 'Unknown');
+
+    document.getElementById('rClaim').textContent   = claim;
+    document.getElementById('rVerdict').innerHTML   = `<strong>${r.verdict || 'Unknown'}</strong> — ${subs[verdict]}<br/><br/>${r.reason || r.interpretation || ''}`;
+
+    setText('rConf', conf !== null ? conf + '%' : '–');
+    setText('rUnc',  unc  !== null ? unc  + '%' : '–');
+    setText('rEv',   ev   !== null ? String(ev) : '–');
+    setText('rQual', qual !== null ? qual + '★' : '–');
+    setText('rRet',  ret  !== null ? String(ret) : '–');
+    setText('rCert', cert !== null ? cert + '%' : '–');
+
+    let pct = 50;
+    if (r.pro_score !== undefined && r.con_score !== undefined && (r.pro_score + r.con_score) > 0)
+      pct = Math.round((r.pro_score / (r.pro_score + r.con_score)) * 100);
+    else if (verdict === 'TRUE') pct = 72;
+    else if (verdict === 'FALSE') pct = 28;
+    document.getElementById('rBalance').style.width = pct + '%';
+
+    document.getElementById('rProText').innerHTML   = '<p>' + (r.pro_r1 || r.pro || '—') + '</p>';
+    document.getElementById('rConText').innerHTML   = '<p>' + (r.con_r1 || r.con || '—') + '</p>';
+    document.getElementById('rRebuttal').innerHTML  = '<p>' + rebText + '</p>';
+    document.getElementById('rReasoning').innerHTML = '<p>' + (r.reason || r.interpretation || '—') + '</p>';
+    document.getElementById('rSources').innerHTML   =
+      '<pre style="white-space:pre-wrap;font-family:var(--mono);font-size:0.75rem;color:var(--text3);line-height:1.8">' + sourcesText + '</pre>';
+
+    document.getElementById('rConclusion').innerHTML =
+      `Based on ${ev ?? 'the'} retrieved evidence sources and multi-agent adversarial debate, the claim ` +
+      `<em>"${claim}"</em> is assessed as <strong>${r.verdict || 'Unknown'}</strong>` +
+      (conf !== null ? ` with ${conf}% confidence` : '') +
+      (unc  !== null ? ` and ${unc}% uncertainty` : '') + '. ' +
+      (verdict === 'TRUE'
+        ? 'The weight of peer-reviewed scientific evidence supports this claim.'
+        : verdict === 'FALSE'
+        ? 'The current body of peer-reviewed evidence does not support this claim.'
+        : 'The evidence is insufficient or conflicting. Further research is recommended before drawing conclusions.');
+
+    document.getElementById('resultsPanel').style.display = 'block';
+    document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+</body>
+</html>
