@@ -48,7 +48,7 @@ import requests
 # CONFIG - Nemotron 3 Nano (Cloud) - Best accuracy + speed balance
 # ═══════════════════════════════════════════════════════
 
-OLLAMA_API_KEY = "9d9a62cefb86449c851182176bb253bc.IVwkj6STJsLfiELY9EL58lLG"
+OLLAMA_API_KEY = "your_api_key"
 OLLAMA_MODEL = "nemotron-3-nano:30b-cloud"  # Best balance - accurate + fast
 OLLAMA_BASE = "https://ollama.com/v1"
 
