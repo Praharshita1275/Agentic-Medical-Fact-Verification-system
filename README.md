@@ -1,4 +1,4 @@
-# 🏥 MedVerify — Medical Claim Verifier
+# MedVerify — Medical Claim Verifier
 
 **Multi-Agent Medical Fact-Checking with Glassmorphism UI**
 
@@ -14,7 +14,7 @@
 | **E3** | Live PubMed Search (NCBI Entrez) + FAISS RAG |
 | **E4** | Uncertainty Quantification (5 factors) |
 | **UI** | Glassmorphism + animated pipeline + dark theme |
-| **LLM** | `gemma4:31b-cloud` via Ollama Cloud API |
+| **LLM** | `nemotron-3-nano:30b` via Ollama Cloud API |
 
 ---
 
@@ -27,6 +27,7 @@ Just open `index.html` in a browser. Uses Claude API in demo mode.
 
 ```bash
 pip install -r requirements.txt
+python build_index.py   # First time only (downloads PubHealth + builds FAISS index)
 python server.py
 ```
 
@@ -59,10 +60,12 @@ Then open **http://localhost:8000** in your browser.
 
 ```
 medical-claim-verifier/
-├── index.html        ← Glassmorphism UI (standalone)
-├── server.py         ← FastAPI backend with full pipeline
+├── index.html            ← Glassmorphism UI (standalone)
+├── server.py            ← FastAPI backend with full pipeline
+├── build_index.py      ← Build FAISS index from medical datasets
 ├── requirements.txt
-└── README.md
+├── data/              ← Medical datasets (train.tsv, dev.tsv, Datensatz.csv)
+└── index/             ← Built FAISS index and metadata
 ```
 
 ---
@@ -87,6 +90,6 @@ Response: Full verification result JSON with verdict, confidence, debate rounds,
 
 - **Frontend**: Vanilla HTML/CSS/JS with glassmorphism design
 - **Backend**: FastAPI + Uvicorn
-- **LLM**: Ollama Cloud (gemma4:31b) via OpenAI-compatible API
+- **LLM**: Ollama Cloud (nemotron-3-nano:30b) via OpenAI-compatible API
 - **Embeddings**: SentenceTransformers (all-MiniLM-L6-v2)
 - **RAG**: FAISS + PubMed NCBI Entrez
